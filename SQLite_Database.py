@@ -36,7 +36,10 @@ class SQLiteDatabase:
             return(entities)
     
     #Update - Updateing entities from the table <<table_name>> based on a condition <<update_condition>>
-    
+    def update_entity(self,table_name,new_values,condition):
+        self.c.execute(f'UPDATE {table_name} SET {new_values} WHERE {condition}')
+        self.conn.commit()
+
     #Delete - Deleting entities from the table <<table_name>> based on a condition <<delete_condition>>
     def delete_entity(self,table_name,delete_condition):
         self.c.execute(f'DELETE FROM {table_name} WHERE {delete_condition}')

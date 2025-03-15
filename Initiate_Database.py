@@ -60,7 +60,9 @@ active_database.add_entity(APPOINTMENT_TABLE_NAME,"'appointment_id','appt_patien
 #Read
 returned = active_database.search_table('date_time,patient_first_name',APPOINTMENT_TABLE_NAME,'appt_clinician_id = 1','date_time DESC',5, f'INNER JOIN {PATIENT_TABLE_NAME} ON {APPOINTMENT_TABLE_NAME}."appt_patient_id" = {PATIENT_TABLE_NAME}."patient_id"')
 print(returned)
+
 #Update
+active_database.update_entity(PATIENT_TABLE_NAME,"patient_last_name = 'Brown'",'patient_id = 1')
 
 #Delete
 active_database.delete_entity(APPOINTMENT_TABLE_NAME,"appointment_id = 1")
