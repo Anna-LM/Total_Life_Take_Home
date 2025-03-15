@@ -1,5 +1,6 @@
 import sqlite3
 from SQLite_Database import SQLiteDatabase
+from Validating_NPI import Validate_NPI
 
 DATABASE_NAME = 'Total_Life_DB'
 
@@ -53,9 +54,19 @@ active_database.create_table(APPOINTMENT_TABLE_NAME,APPIONTMENT_TABLE)
 
 # -- CRUD --
 #Create
-active_database.add_entity(CLINICIAN_TABLE_NAME,"'npi_id','clinician_first_name', 'clinician_last_name', 'state'","'1','John', 'Doe', 'AB'")
 active_database.add_entity(PATIENT_TABLE_NAME,"'patient_id','patient_first_name', 'patient_last_name', 'phone_number','preferred_clinician_id'","'1','Jane', 'Smith', '555-4125','1'")
 active_database.add_entity(APPOINTMENT_TABLE_NAME,"'appointment_id','appt_patient_id', 'appt_clinician_id', 'date_time','status'","'1','1', '1', '15:00 1/1/25','Booked'")
+
+demo_npi_number = '1851510887'
+demo_clinician_first_name = 'John'
+demo_clinician_last_name = 'AAGESEN'
+demo_clinician_state = 'AB'
+
+if Validate_NPI (demo_npi_number,demo_clinician_first_name,demo_clinician_last_name,demo_clinician_state):
+    print('here')
+    active_database.add_entity(CLINICIAN_TABLE_NAME,"'npi_id','clinician_first_name', 'clinician_last_name', 'state'",f'"{demo_npi_number}","{demo_clinician_first_name}", "{demo_clinician_last_name}", "{demo_clinician_state}"')
+else:
+    print('Invalid Clinican Details')
 
 #Read
 returned = active_database.search_table('date_time,patient_first_name',APPOINTMENT_TABLE_NAME,'appt_clinician_id = 1','date_time DESC',5, f'INNER JOIN {PATIENT_TABLE_NAME} ON {APPOINTMENT_TABLE_NAME}."appt_patient_id" = {PATIENT_TABLE_NAME}."patient_id"')

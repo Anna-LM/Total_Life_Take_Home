@@ -11,12 +11,12 @@ def Validate_NPI (npi_number,first_name,last_name,state):
     response = requests.get(url)
     response = response.json()
 
-    #returns Valid if person found in registry, returns Error if no one in registry of that detail
+    #returns True if person found in registry, returns False if no one in registry of that detail
     if 'Errors' in response:
-        return('Error')
+        return(False)
     else:
-        return('Valid')
+        return(True)
 
 
 
-Validate_NPI ('1851510887','JOHN','AAGESEN','IA')
+#Validate_NPI ('1851510887','JOHN','AAGESEN','IA')
