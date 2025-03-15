@@ -51,5 +51,12 @@ active_database.create_table(CLINICIAN_TABLE_NAME,CLINICIAN_TABLE)
 active_database.create_table(PATIENT_TABLE_NAME,PATIENT_TABLE)
 active_database.create_table(APPOINTMENT_TABLE_NAME,APPIONTMENT_TABLE)
 
+#Adding 'dummy' data to Database
+active_database.add_entity(CLINICIAN_TABLE_NAME,"'npi_id','first_name', 'last_name', 'state'","'1','John', 'Doe', 'AB'")
+active_database.add_entity(PATIENT_TABLE_NAME,"'patient_id','first_name', 'last_name', 'phone_number','npi_id'","'1','Jane', 'Smith', '555-4125','1'")
+active_database.add_entity(APPOINTMENT_TABLE_NAME,"'appointment_id','patient_id', 'npi_id', 'date_time','status'","'1','1', '1', '15:00 1/1/25','Booked'")
+
+
+
 #Closing the database
 active_database.close_database()

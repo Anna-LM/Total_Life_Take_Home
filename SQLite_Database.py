@@ -21,7 +21,3 @@ class SQLiteDatabase:
     def close_database(self):
         self.conn.close()
 
-    #Adding entities/rows to the table <<table_name>>
-    def add_entity(self,table_name,column,value):
-        self.c.execute(f'INSERT OR IGNORE INTO {table_name} ({column}) VALUES ({value})')
-        self.conn.commit()
