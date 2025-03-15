@@ -19,7 +19,22 @@ class SQLiteDatabase:
         self.c.execute(f'INSERT OR IGNORE INTO {table_name} ({column}) VALUES ({value})')
         self.conn.commit()
     
-    #Read - Reading entities from the table <<table_name>> based on a condition <<read_condition>>
+    #Read - Reading entities from the table <<table_name>> based on conditions <<search_condition,order_condition,limit_condition,foreign_key_condition>>
+    def search_table(self,what, table_name,search_condition,order_condition,limit_condition,foreign_key_condition):
+            search_statement = f'SELECT {what} FROM {table_name} '
+            if foreign_key_condition:
+                search_statement=search_statement+ f'{foreign_key_condition} '
+            if search_condition:
+                search_statement=search_statement+ f'WHERE {search_condition} '
+            if order_condition:
+                search_statement=search_statement+ f'ORDER BY {order_condition} '
+            if limit_condition:
+                search_statement=search_statement+ f'LIMIT {limit_condition} '
+
+            self.c.execute(search_statement)
+            entities = self.c.fetchall()
+            return(entities)
+    
     #Update - Updateing entities from the table <<table_name>> based on a condition <<update_condition>>
     
     #Delete - Deleting entities from the table <<table_name>> based on a condition <<delete_condition>>
