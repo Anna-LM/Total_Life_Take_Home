@@ -18,7 +18,8 @@ def appointments_endpoints():
         "date_time": request.args.get('date_time'),
         "status": request.args.get('status'),
         "start_date": request.args.get('start_date'),  # Added start date
-        "end_date": request.args.get('end_date')  # Added end date
+        "end_date": request.args.get('end_date'),  # Added end date
+       
     }
 
     # Open database
@@ -27,6 +28,10 @@ def appointments_endpoints():
     table_name = 'appointment_table'
 
     if request.method == 'GET':
+
+       
+     
+
         # Read the correct data based on query parameters
         query_conditions = []
         if arguments['start_date'] and arguments['end_date']:
@@ -47,9 +52,9 @@ def appointments_endpoints():
         
         FOREIGN_KEY_CONDITION = f'INNER JOIN patient_table ON appointment_table."appt_patient_id" = patient_table."patient_id"'
         select = "appointment_id, date_time,status,appt_patient_id,appt_clinician_id,patient_first_name,patient_last_name"
-        active_database = SQLiteDatabase(DATABASE_NAME)
+     
         returned_results = active_database.search_table(select, table_name, query_condition, 'date_time ASC', None, FOREIGN_KEY_CONDITION)
-        active_database.close_database()
+       
      
         # Format the returned results into a list of dictionaries
         returned_entities = []
@@ -65,6 +70,7 @@ def appointments_endpoints():
                     "appt_patient_last_name":result[6],
 
                 })
+        
 
         print(returned_entities)
         returned_entities = returned_entities
@@ -104,6 +110,7 @@ def clinician_endpoints():
         "clinician_first_name": request.args.get('clinician_first_name'),
         "clinician_last_name": request.args.get('clinician_last_name'),
         "state": request.args.get('state'),
+        
     }
 
     # Open database

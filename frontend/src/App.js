@@ -277,7 +277,7 @@ const App = () => {
       setRegisterClinicianState('');
     } catch (err) {
       console.error('Error creating clinician:', err);
-      setError('Clinician Details Do NOT match Regsitry');
+      setError('Clinician Details Do NOT match Registry');
     }
     setLoading(false);
   };
@@ -531,6 +531,30 @@ const App = () => {
             placeholder="Clinician ID"
             className="border p-2 rounded"
           />
+<select
+  value={newPatientID}
+  onChange={(e) => setNewPatientID(e.target.value)}
+  className="border p-2 rounded"
+>
+  <option value="">Select Patient ID</option>
+  {/* To Do : automate these options */}
+  <option value="1">Patient 1</option>
+  <option value="2">Patient 2</option>
+  <option value="3">Patient 3</option>
+</select>
+
+<select
+  value={newClinicianID}
+  onChange={(e) => setNewClinicianID(e.target.value)}
+  className="border p-2 rounded"
+>
+  <option value="">Select Clinician ID</option>
+  {/* To Do : automate these options */}
+  <option value="A">Clinician A</option>
+  <option value="B">Clinician B</option>
+  <option value="C">Clinician C</option>
+</select>
+
           <input
             type="datetime-local"
             value={newDate}
