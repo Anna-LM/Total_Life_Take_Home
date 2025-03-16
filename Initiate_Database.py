@@ -56,6 +56,7 @@ active_database.create_table(APPOINTMENT_TABLE_NAME,APPIONTMENT_TABLE)
 #Create
 active_database.add_entity(PATIENT_TABLE_NAME,"'patient_id','patient_first_name', 'patient_last_name', 'phone_number','preferred_clinician_id'","'1','Jane', 'Smith', '555-4125','1'")
 active_database.add_entity(APPOINTMENT_TABLE_NAME,"'appointment_id','appt_patient_id', 'appt_clinician_id', 'date_time','status'","'1','1', '1', '15:00 1/1/25','Booked'")
+active_database.add_entity(APPOINTMENT_TABLE_NAME,"'appointment_id','appt_patient_id', 'appt_clinician_id', 'date_time','status'","'2','1', '1', '15:00 1/1/25','Booked'")
 
 demo_npi_number = '1851510887'
 demo_clinician_first_name = 'John'
@@ -76,7 +77,7 @@ print(returned)
 active_database.update_entity(PATIENT_TABLE_NAME,"patient_last_name = 'Brown'",'patient_id = 1')
 
 #Delete
-active_database.delete_entity(APPOINTMENT_TABLE_NAME,"appointment_id = 1")
+active_database.delete_entity(APPOINTMENT_TABLE_NAME,"appointment_id = 2")
 
 
 
