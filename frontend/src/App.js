@@ -32,6 +32,41 @@ const App = () => {
   const [updateDate, setUpdateDate] = useState('');
   const [updateStatus, setUpdateStatus] = useState('Scheduled');
 
+
+    // Register Patient form data
+    const [registerPatientId, setRegisterPatientId] = useState('');
+    const [registerPatientFirstName, setRegisterPatientFirstName] = useState('');
+    const [registerPatientLastName, setRegisterPatientLastName] = useState('');
+    const [registerPatientNumber, setRegisterPatientNumber] = useState('');
+    const [registerPatientClinician, setRegisterPatientClinician] = useState('');
+  
+    // Delete patient form data
+    const [deletePatientId, setDeletePatientId] = useState('');
+  
+    // Update patient form data
+    const [updatePatientFirstName, setUpdatePatientFirstName] = useState('');
+    const [updatePatientLastName, setUpdatePatientLastName] = useState('');
+    const [updatePatientNumber, setUpdatePatientNumber] = useState('');
+    const [updatePatientClinician, setUpdatePatientClinician] = useState('');
+
+
+        // Register Doctor form data
+        const [registerDoctorId, setRegisterDoctorId] = useState('');
+        const [registerDoctorFirstName, setRegisterDoctorFirstName] = useState('');
+        const [registerDoctorLastName, setRegisterDoctorLastName] = useState('');
+        const [registerDoctorState, setRegisterDoctorState] = useState('');
+      
+        // Delete doctor form data
+        const [deleteDoctorId, setDeleteDoctorId] = useState('');
+      
+        // Update doctor form data
+        const [updateDoctorFirstName, setUpdateDoctorFirstName] = useState('');
+        const [updateDoctorLastName, setUpdateDoctorLastName] = useState('');
+        const [updateDoctorState, setUpdateDoctorState] = useState('');
+
+
+
+
   // Fetch appointment by ID
   const fetchAppointment = async () => {
     if (!appointmentId) {
@@ -424,7 +459,7 @@ const App = () => {
       </div>
 
       <p> -------- </p>
-      
+
     </div>
 
     
