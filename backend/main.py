@@ -48,6 +48,8 @@ def appointments_endpoints():
 
     elif request.method == 'POST':
         #create new entity in appointments table
+        print('here')
+        
         active_database.add_entity(table_name,"'appt_patient_id', 'appt_clinician_id', 'date_time','status'",f"'{arguments['appt_patient_id']}', '{arguments['appt_clinician_id']}', '{arguments['date_time']}','{arguments['status']}'")
         returned_entites = 'Added'
 

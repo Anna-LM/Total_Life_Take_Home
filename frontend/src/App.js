@@ -5,85 +5,121 @@ const App = () => {
   const [appointmentsByClinician, setAppointmentsByClinician] = useState([]);
   const [appointmentsByPatient, setAppointmentsByPatient] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [appointmentId, setAppointmentId] = useState('');
   const [clinicianName, setClinicianName] = useState('');
   const [patientName, setPatientName] = useState('');
 
+  // New appointment form data
+  const [newAppointmentId, setNewAppointmentId] = useState('');
+  const [newPatientID, setNewPatientID] = useState('');
+  const [newClinicianID, setNewClinicianID] = useState('');
+  const [newDate, setNewDate] = useState('');
+  const [newStatus, setNewStatus] = useState('Scheduled');
+
   // Fetch appointment by ID
-  const fetchAppointment = () => {
+  const fetchAppointment = async () => {
     if (!appointmentId) {
       setError('Please enter an appointment ID');
       return;
     }
-
-    fetch(`http://127.0.0.1:5000/appointments?appointment_id=${appointmentId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Network response was not ok');
-        return res.json();
-      })
-      .then((data) => {
-        setAppointmentDetails(Array.isArray(data) ? data[0] : data);
-        setError(null);
-      })
-      .catch((err) => {
-        console.error('Error fetching appointment:', err);
-        setError(err.message);
-        setAppointmentDetails(null);
-      });
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/appointments?appointment_id=${appointmentId}`);
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setAppointmentDetails(Array.isArray(data) ? data[0] : data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching appointment:', err);
+      setError(err.message);
+      setAppointmentDetails(null);
+    }
+    setLoading(false);
   };
 
   // Fetch appointments by clinician name
-  const fetchAppointmentsByClinician = () => {
+  const fetchAppointmentsByClinician = async () => {
     if (!clinicianName) {
       setError('Please enter a clinician name');
       return;
     }
-
-    fetch(`http://127.0.0.1:5000/appointments?appt_clinician_id=${clinicianName}`)
-    .then((res) => {
-        if (!res.ok) throw new Error('Network response was not ok');
-        return res.json();
-      })
-      .then((data) => {
-        setAppointmentDetails(Array.isArray(data) ? data[0] : data);
-        setError(null);
-      })
-      .catch((err) => {
-        console.error('Error fetching appointment:', err);
-        setError(err.message);
-        setAppointmentDetails(null);
-      });
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/appointments?appt_clinician_id=${clinicianName}`);
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setAppointmentsByClinician(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching appointments by clinician:', err);
+      setError(err.message);
+      setAppointmentsByClinician([]);
+    }
+    setLoading(false);
   };
 
   // Fetch appointments by patient name
-  const fetchAppointmentsByPatient = () => {
+  const fetchAppointmentsByPatient = async () => {
     if (!patientName) {
       setError('Please enter a patient name');
       return;
     }
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/appointments?appt_patient_id=${patientName}`);
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setAppointmentsByPatient(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching appointments by patient:', err);
+      setError(err.message);
+      setAppointmentsByPatient([]);
+    }
+    setLoading(false);
+  };
 
-    fetch(`http://127.0.0.1:5000/appointments?appt_patient_id=${patientName}`)
-    .then((res) => {
-        if (!res.ok) throw new Error('Network response was not ok');
-        return res.json();
-      })
-      .then((data) => {
-        setAppointmentDetails(Array.isArray(data) ? data[0] : data);
-        setError(null);
-      })
-      .catch((err) => {
-        console.error('Error fetching appointment:', err);
-        setError(err.message);
-        setAppointmentDetails(null);
+  // Create a new appointment (POST request)
+  const createAppointment = async () => {
+    if ( !newPatientID || !newClinicianID || !newDate) {
+      setError('Please fill in all fields for the new appointment');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/appointments?appt_patient_id=${newPatientID}&appt_clinician_id=${newClinicianID}&date_time=${newDate}&status=${newStatus}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+       
       });
+
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setError(null);
+      alert('Appointment created successfully');
+      // Clear the form after successful creation
+      setNewAppointmentId('');
+      setNewPatientID('');
+      setNewClinicianID('');
+      setNewDate('');
+      setNewStatus('Scheduled');
+    } catch (err) {
+      console.error('Error creating appointment:', err);
+      setError(err.message);
+    }
+    setLoading(false);
   };
 
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">Search Appointments</h1>
 
-      {/* Input and Button for Searching by Appointment ID */}
+      {/* Search by Appointment ID */}
       <div className="flex gap-2 mb-4">
         <input
           type="number"
@@ -100,7 +136,7 @@ const App = () => {
         </button>
       </div>
 
-      {/* Input and Button for Searching by Clinician */}
+      {/* Search by Clinician */}
       <div className="flex gap-2 mb-4">
         <input
           type="text"
@@ -117,7 +153,7 @@ const App = () => {
         </button>
       </div>
 
-      {/* Input and Button for Searching by Patient */}
+      {/* Search by Patient */}
       <div className="flex gap-2 mb-4">
         <input
           type="text"
@@ -137,7 +173,10 @@ const App = () => {
       {/* Error Message */}
       {error && <p className="text-red-500">{error}</p>}
 
-      {/* Display Single Appointment Details */}
+      {/* Loading State */}
+      {loading && <p>Loading...</p>}
+
+      {/* Display Single Appointment */}
       {appointmentDetails && (
         <div className="p-4 border rounded bg-gray-100">
           <h2 className="font-bold">Appointment Details</h2>
@@ -148,6 +187,80 @@ const App = () => {
           <p>Status: {appointmentDetails.status}</p>
         </div>
       )}
+
+      {/* Display Appointments by Clinician */}
+      {appointmentsByClinician.length > 0 && (
+        <div className="mt-4">
+          <h2 className="font-bold">Appointments by Clinician</h2>
+          {appointmentsByClinician.map((appt) => (
+            <div key={appt.appointment_id} className="p-4 border rounded bg-gray-100 mb-2">
+              <p>Appointment ID: {appt.appointment_id}</p>
+              <p>Patient: {appt.appt_patient_id}</p>
+              <p>Clinician: {appt.appt_clinician_id}</p>
+              <p>Date: {new Date(appt.date_time).toLocaleString()}</p>
+              <p>Status: {appt.status}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Display Appointments by Patient */}
+      {appointmentsByPatient.length > 0 && (
+        <div className="mt-4">
+          <h2 className="font-bold">Appointments by Patient</h2>
+          {appointmentsByPatient.map((appt) => (
+            <div key={appt.appointment_id} className="p-4 border rounded bg-gray-100 mb-2">
+              <p>Appointment ID: {appt.appointment_id}</p>
+              <p>Patient: {appt.appt_patient_id}</p>
+              <p>Clinician: {appt.appt_clinician_id}</p>
+              <p>Date: {new Date(appt.date_time).toLocaleString()}</p>
+              <p>Status: {appt.status}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add New Appointment Form */}
+      <div className="mt-4">
+        <h2 className="font-bold">Create New Appointment</h2>
+        <div className="flex gap-2 mb-4">
+          <input
+            type="text"
+            value={newPatientID}
+            onChange={(e) => setNewPatientID(e.target.value)}
+            placeholder="Patient ID"
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={newClinicianID}
+            onChange={(e) => setNewClinicianID(e.target.value)}
+            placeholder="Clinician ID"
+            className="border p-2 rounded"
+          />
+          <input
+            type="datetime-local"
+            value={newDate}
+            onChange={(e) => setNewDate(e.target.value)}
+            className="border p-2 rounded"
+          />
+          <select
+            value={newStatus}
+            onChange={(e) => setNewStatus(e.target.value)}
+            className="border p-2 rounded"
+          >
+            <option value="Scheduled">Scheduled</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+        <button
+          onClick={createAppointment}
+          className="bg-teal-500 text-white px-4 py-2 rounded"
+        >
+          Create Appointment
+        </button>
+      </div>
     </div>
   );
 };
