@@ -8,11 +8,11 @@ DATABASE_NAME = 'Total_Life_DB'
 
 CLINICIAN_TABLE_NAME = 'clinican_table'
 
-#COLUMN    =        column_name         column_type     column_key
-NPI_COLUMN =        'npi_id'+ ' ' +     'INTEGER'+ ' ' +   'PRIMARY KEY'
-FIRST_NAME_COLUMN = 'clinician_first_name'+ ' ' + 'TEXT'
-LAST_NAME_COLUMN =  'clinician_last_name'+ ' ' +  'TEXT'
-STATE_COLUMN =      'state'+ ' ' +      'TEXT'
+#COLUMN    =        column_name                     column_type         column_key
+NPI_COLUMN =        'npi_id'+ ' ' +                 'INTEGER'+ ' ' +   'PRIMARY KEY'
+FIRST_NAME_COLUMN = 'clinician_first_name'+ ' ' +   'TEXT'
+LAST_NAME_COLUMN =  'clinician_last_name'+ ' ' +    'TEXT'
+STATE_COLUMN =      'state'+ ' ' +                  'TEXT'
 
 CLINICIAN_TABLE = NPI_COLUMN +', '+ FIRST_NAME_COLUMN +', '+ LAST_NAME_COLUMN +', '+ STATE_COLUMN
 
@@ -22,10 +22,10 @@ PATIENT_TABLE_NAME = 'patient_table'
 
 #COLUMN    =        column_name                     column_type         column_key
 PATIENT_ID_COLUMN = 'patient_id'+ ' ' +             'INTEGER'+ ' ' +   'PRIMARY KEY'
-FIRST_NAME_COLUMN = 'patient_first_name'+ ' ' +             'TEXT'
-LAST_NAME_COLUMN =  'patient_last_name'+ ' ' +              'TEXT'
+FIRST_NAME_COLUMN = 'patient_first_name'+ ' ' +     'TEXT'
+LAST_NAME_COLUMN =  'patient_last_name'+ ' ' +      'TEXT'
 PHONE_COLUMN =      'phone_number'+ ' ' +           'TEXT'
-CLINICIAN_COLUMN =  'preferred_clinician_id'+ ' ' +                 'INTEGER'+ ' '+     f'REFERENCES {CLINICIAN_TABLE_NAME} (npi_id)'
+CLINICIAN_COLUMN =  'preferred_clinician_id'+ ' ' + 'INTEGER'+ ' '+     f'REFERENCES {CLINICIAN_TABLE_NAME} (npi_id)'
 
 PATIENT_TABLE = PATIENT_ID_COLUMN +', '+ FIRST_NAME_COLUMN +', '+ LAST_NAME_COLUMN +', '+ PHONE_COLUMN +', '+ CLINICIAN_COLUMN
 
@@ -33,12 +33,12 @@ PATIENT_TABLE = PATIENT_ID_COLUMN +', '+ FIRST_NAME_COLUMN +', '+ LAST_NAME_COLU
 
 APPOINTMENT_TABLE_NAME = 'appointment_table'
 
-#COLUMN    =            column_name              column_type        column_key
-APPIONTMENT_ID_COLUMN = 'appointment_id'+ ' ' + 'INTEGER'+ ' ' +    'PRIMARY KEY'
-PATIENT_COLUMN =        'appt_patient_id'+ ' ' +     'INTEGER'+ ' '+     f'REFERENCES {PATIENT_TABLE_NAME} (patient_id)'
-CLINICIAN_COLUMN =      'appt_clinician_id'+ ' ' +         'INTEGER'+ ' '+     f'REFERENCES {CLINICIAN_TABLE_NAME} (npi_id)'
-DATE_TIME_COLUMN =      'date_time'+ ' ' +      'TEXT'
-STATUS_COLUMN =         'status'+ ' ' +         'TEXT'
+#COLUMN    =            column_name                 column_type         column_key
+APPIONTMENT_ID_COLUMN = 'appointment_id'+ ' ' +     'INTEGER'+ ' ' +    'PRIMARY KEY'
+PATIENT_COLUMN =        'appt_patient_id'+ ' ' +    'INTEGER'+ ' '+     f'REFERENCES {PATIENT_TABLE_NAME} (patient_id)'
+CLINICIAN_COLUMN =      'appt_clinician_id'+ ' ' +  'INTEGER'+ ' '+     f'REFERENCES {CLINICIAN_TABLE_NAME} (npi_id)'
+DATE_TIME_COLUMN =      'date_time'+ ' ' +          'TEXT'
+STATUS_COLUMN =         'status'+ ' ' +             'TEXT'
 
 APPIONTMENT_TABLE = APPIONTMENT_ID_COLUMN  +', '+ DATE_TIME_COLUMN +', '+ STATUS_COLUMN +', '+ PATIENT_COLUMN +', '+ CLINICIAN_COLUMN 
 
