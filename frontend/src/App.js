@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
+
 const App = () => {
   const [appointmentDetails, setAppointmentDetails] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/appointments?appointment_id=2')
+    fetch('http://127.0.0.1:5000/appointments?appointment_id=1')
       .then((res) => {
         if (!res.ok) {
           throw new Error('Network response was not ok');
