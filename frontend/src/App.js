@@ -11,6 +11,10 @@ const App = () => {
   const [clinicianName, setClinicianName] = useState('');
   const [patientName, setPatientName] = useState('');
 
+  // Date Range for Searching
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
   // New appointment form data
   const [newAppointmentId, setNewAppointmentId] = useState('');
   const [newPatientID, setNewPatientID] = useState('');
@@ -28,7 +32,6 @@ const App = () => {
   const [updateDate, setUpdateDate] = useState('');
   const [updateStatus, setUpdateStatus] = useState('Scheduled');
 
-
   // Fetch appointment by ID
   const fetchAppointment = async () => {
     if (!appointmentId) {
@@ -40,12 +43,12 @@ const App = () => {
       const res = await fetch(`http://127.0.0.1:5000/appointments?appointment_id=${appointmentId}`);
       if (!res.ok) throw new Error('Network response was not ok');
       const data = await res.json();
-      setAppointmentDetails(Array.isArray(data) ? data[0] : data);
+      setAppointmentsByClinician(Array.isArray(data) ? data : [data]); // Ensure it's always an array
       setError(null);
     } catch (err) {
-      console.error('Error fetching appointment:', err);
+      console.error('Error fetching appointments:', err);
       setError(err.message);
-      setAppointmentDetails(null);
+      setAppointmentsByClinician([]); // Reset appointments if error occurs
     }
     setLoading(false);
   };
@@ -61,12 +64,12 @@ const App = () => {
       const res = await fetch(`http://127.0.0.1:5000/appointments?appt_clinician_id=${clinicianName}`);
       if (!res.ok) throw new Error('Network response was not ok');
       const data = await res.json();
-      setAppointmentsByClinician(data);
+      setAppointmentsByClinician(Array.isArray(data) ? data : [data]); // Ensure it's always an array
       setError(null);
     } catch (err) {
-      console.error('Error fetching appointments by clinician:', err);
+      console.error('Error fetching appointments:', err);
       setError(err.message);
-      setAppointmentsByClinician([]);
+      setAppointmentsByClinician([]); // Reset appointments if error occurs
     }
     setLoading(false);
   };
@@ -82,19 +85,40 @@ const App = () => {
       const res = await fetch(`http://127.0.0.1:5000/appointments?appt_patient_id=${patientName}`);
       if (!res.ok) throw new Error('Network response was not ok');
       const data = await res.json();
-      setAppointmentsByPatient(data);
+      setAppointmentsByClinician(Array.isArray(data) ? data : [data]); // Ensure it's always an array
       setError(null);
     } catch (err) {
-      console.error('Error fetching appointments by patient:', err);
+      console.error('Error fetching appointments:', err);
       setError(err.message);
-      setAppointmentsByPatient([]);
+      setAppointmentsByClinician([]); // Reset appointments if error occurs
+    }
+    setLoading(false);
+  };
+
+  // Fetch appointments by date range
+  const fetchAppointmentsByDate = async () => {
+    if (!startDate || !endDate) {
+      setError('Please enter both start and end dates');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/appointments?start_date=${startDate}&end_date=${endDate}`);
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setAppointmentsByClinician(Array.isArray(data) ? data : [data]); // Ensure it's always an array
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching appointments:', err);
+      setError(err.message);
+      setAppointmentsByClinician([]); // Reset appointments if error occurs
     }
     setLoading(false);
   };
 
   // Create a new appointment (POST request)
   const createAppointment = async () => {
-    if ( !newPatientID || !newClinicianID || !newDate) {
+    if (!newPatientID || !newClinicianID || !newDate) {
       setError('Please fill in all fields for the new appointment');
       return;
     }
@@ -106,7 +130,6 @@ const App = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-       
       });
 
       if (!res.ok) throw new Error('Network response was not ok');
@@ -126,9 +149,9 @@ const App = () => {
     setLoading(false);
   };
 
-  // Update a appointment (PATCH request)
+  // Update an appointment (PATCH request)
   const updateAppointment = async () => {
-    if ( !updateAppointmentId ) {
+    if (!updateAppointmentId) {
       setError('Please fill in appointment ID to update');
       return;
     }
@@ -140,7 +163,6 @@ const App = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-       
       });
 
       if (!res.ok) throw new Error('Network response was not ok');
@@ -160,11 +182,9 @@ const App = () => {
     setLoading(false);
   };
 
-
-
-   // Delete a new appointment (POST request)
-   const deleteAppointment = async () => {
-    if ( !deleteAppointmentId ) {
+  // Delete an appointment (POST request)
+  const deleteAppointment = async () => {
+    if (!deleteAppointmentId) {
       setError('Please fill in all fields to delete appointment');
       return;
     }
@@ -176,7 +196,6 @@ const App = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-       
       });
 
       if (!res.ok) throw new Error('Network response was not ok');
@@ -185,14 +204,12 @@ const App = () => {
       alert('Appointment deleted successfully');
       // Clear the form after successful creation
       setDeleteAppointmentId('');
-
     } catch (err) {
       console.error('Error deleting appointment:', err);
       setError(err.message);
     }
     setLoading(false);
   };
-
 
   return (
     <div className="p-4">
@@ -249,28 +266,38 @@ const App = () => {
         </button>
       </div>
 
+      {/* Search by Date Range */}
+      <div className="flex gap-2 mb-4">
+        <input
+          type="datetime-local"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="border p-2 rounded"
+        />
+        <input
+          type="datetime-local"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="border p-2 rounded"
+        />
+        <button
+          onClick={fetchAppointmentsByDate}
+          className="bg-orange-500 text-white px-4 py-2 rounded"
+        >
+          Search by Date Range
+        </button>
+      </div>
+
       {/* Error Message */}
       {error && <p className="text-red-500">{error}</p>}
 
       {/* Loading State */}
       {loading && <p>Loading...</p>}
 
-      {/* Display Single Appointment */}
-      {appointmentDetails && (
-        <div className="p-4 border rounded bg-gray-100">
-          <h2 className="font-bold">Appointment Details</h2>
-          <p>Appointment ID: {appointmentDetails.appointment_id}</p>
-          <p>Patient: {appointmentDetails.appt_patient_id}</p>
-          <p>Clinician: {appointmentDetails.appt_clinician_id}</p>
-          <p>Date: {new Date(appointmentDetails.date_time).toLocaleString()}</p>
-          <p>Status: {appointmentDetails.status}</p>
-        </div>
-      )}
-
-      {/* Display Appointments by Clinician */}
+      {/* Display Appointments */}
       {appointmentsByClinician.length > 0 && (
         <div className="mt-4">
-          <h2 className="font-bold">Appointments by Clinician</h2>
+          <h2 className="font-bold">Appointments</h2>
           {appointmentsByClinician.map((appt) => (
             <div key={appt.appointment_id} className="p-4 border rounded bg-gray-100 mb-2">
               <p>Appointment ID: {appt.appointment_id}</p>
@@ -278,22 +305,7 @@ const App = () => {
               <p>Clinician: {appt.appt_clinician_id}</p>
               <p>Date: {new Date(appt.date_time).toLocaleString()}</p>
               <p>Status: {appt.status}</p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Display Appointments by Patient */}
-      {appointmentsByPatient.length > 0 && (
-        <div className="mt-4">
-          <h2 className="font-bold">Appointments by Patient</h2>
-          {appointmentsByPatient.map((appt) => (
-            <div key={appt.appointment_id} className="p-4 border rounded bg-gray-100 mb-2">
-              <p>Appointment ID: {appt.appointment_id}</p>
-              <p>Patient: {appt.appt_patient_id}</p>
-              <p>Clinician: {appt.appt_clinician_id}</p>
-              <p>Date: {new Date(appt.date_time).toLocaleString()}</p>
-              <p>Status: {appt.status}</p>
+              <p> -------- </p>
             </div>
           ))}
         </div>
@@ -332,20 +344,20 @@ const App = () => {
             <option value="Completed">Completed</option>
             <option value="Cancelled">Cancelled</option>
           </select>
+          <button
+            onClick={createAppointment}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Create Appointment
+          </button>
         </div>
-        <button
-          onClick={createAppointment}
-          className="bg-teal-500 text-white px-4 py-2 rounded"
-        >
-          Create Appointment
-        </button>
       </div>
-
- {/* Update Appointment Form */}
- <div className="mt-4">
+      
+      {/* Update Appointment Form */}
+      <div className="mt-4">
         <h2 className="font-bold">Update Appointment</h2>
         <div className="flex gap-2 mb-4">
-        <input
+          <input
             type="text"
             value={updateAppointmentId}
             onChange={(e) => setUpdateAppointmentId(e.target.value)}
@@ -381,18 +393,17 @@ const App = () => {
             <option value="Completed">Completed</option>
             <option value="Cancelled">Cancelled</option>
           </select>
+          <button
+            onClick={updateAppointment}
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
+            Update Appointment
+          </button>
         </div>
-        <button
-          onClick={updateAppointment}
-          className="bg-teal-500 text-white px-4 py-2 rounded"
-        >
-          Update Appointment
-        </button>
       </div>
 
-
-       {/* Delete Appointment Form */}
-       <div className="mt-4">
+      {/* Delete Appointment Form */}
+      <div className="mt-4">
         <h2 className="font-bold">Delete Appointment</h2>
         <div className="flex gap-2 mb-4">
           <input
@@ -402,17 +413,14 @@ const App = () => {
             placeholder="Appointment ID"
             className="border p-2 rounded"
           />
+          <button
+            onClick={deleteAppointment}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Delete Appointment
+          </button>
         </div>
-        <button
-          onClick={deleteAppointment}
-          className="bg-teal-500 text-white px-4 py-2 rounded"
-        >
-          Delete Appointment
-        </button>
       </div>
-
-
-
     </div>
   );
 };
