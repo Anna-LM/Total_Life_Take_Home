@@ -63,6 +63,7 @@ demo_clinician_first_name = 'John'
 demo_clinician_last_name = 'AAGESEN'
 demo_clinician_state = 'AB'
 
+#to do: create new validation for if npi number already in DB
 if Validate_NPI (demo_npi_number,demo_clinician_first_name,demo_clinician_last_name,demo_clinician_state):
     print('here')
     active_database.add_entity(CLINICIAN_TABLE_NAME,"'npi_id','clinician_first_name', 'clinician_last_name', 'state'",f'"{demo_npi_number}","{demo_clinician_first_name}", "{demo_clinician_last_name}", "{demo_clinician_state}"')

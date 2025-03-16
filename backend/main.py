@@ -47,9 +47,9 @@ def appointments_endpoints():
         
         FOREIGN_KEY_CONDITION = f'INNER JOIN patient_table ON appointment_table."appt_patient_id" = patient_table."patient_id"'
         select = "appointment_id, date_time,status,appt_patient_id,appt_clinician_id,patient_first_name,patient_last_name"
-        
+        active_database = SQLiteDatabase(DATABASE_NAME)
         returned_results = active_database.search_table(select, table_name, query_condition, 'date_time ASC', None, FOREIGN_KEY_CONDITION)
-
+        active_database.close_database()
      
         # Format the returned results into a list of dictionaries
         returned_entities = []
@@ -66,13 +66,14 @@ def appointments_endpoints():
 
                 })
 
-        returned_entites = returned_entities
+        print(returned_entities)
+        returned_entities = returned_entities
 
     elif request.method == 'POST':
         # Create new entity in appointments table
         active_database.add_entity(table_name, "'appt_patient_id', 'appt_clinician_id', 'date_time', 'status'", 
                                     f"'{arguments['appt_patient_id']}', '{arguments['appt_clinician_id']}', '{arguments['date_time']}', '{arguments['status']}'")
-        returned_entites = 'Added'
+        returned_entities = 'Added'
 
     elif request.method == 'PATCH':
         # Update entity in appointments table
@@ -81,17 +82,17 @@ def appointments_endpoints():
                 active_database.update_entity(table_name, f"{argument} = '{arguments[argument]}'", 
                                               f"appointment_id = {arguments['appointment_id']}")
         
-        returned_entites = 'Updated'
+        returned_entities = 'Updated'
 
     elif request.method == 'DELETE':
         # Delete entity in appointments table
         active_database.delete_entity(table_name, f"appointment_id = {arguments['appointment_id']}")
-        returned_entites = 'Deleted'
+        returned_entities = 'Deleted'
 
     # Closing the database
     active_database.close_database()
 
-    return jsonify(returned_entites)
+    return jsonify(returned_entities)
 
 
 
@@ -99,10 +100,10 @@ def appointments_endpoints():
 @app.route('/clinicians', methods=['GET', 'POST', 'PATCH', 'DELETE'])
 def clinician_endpoints():
     arguments = {
-        "clinician_id": request.args.get('clinician_id'),
+        "npi_id": request.args.get('npi_id'),
         "clinician_first_name": request.args.get('clinician_first_name'),
         "clinician_last_name": request.args.get('clinician_last_name'),
-        "clinician_state": request.args.get('clinician_state'),
+        "state": request.args.get('state'),
     }
 
     # Open database
@@ -111,18 +112,18 @@ def clinician_endpoints():
     table_name = 'clinican_table'
 
     if request.method == 'GET':
-        returned_entites = active_database.search_table(f"'{arguments['clinician_first_name']}', '{arguments['clinician_last_name']}', '{arguments['clinician_state']}'",table_name,f"npi_id = {arguments['clinician_id']}",None,None,None)
+        returned_entities = active_database.search_table("*",table_name,f"npi_id = {arguments['npi_id']}",None,None,None)
 
 
 
     elif request.method == 'POST':
         # Create new entity in appointments table
-        if Validate_NPI (arguments['clinician_id'],arguments['clinician_first_name'],arguments['clinician_last_name'],arguments['clinician_state']):
+        if Validate_NPI (arguments['npi_id'],arguments['clinician_first_name'],arguments['clinician_last_name'],arguments['state']):
 
-            active_database.add_entity(table_name, "'npi_id', 'clinician_first_name', 'clinician_last_name', 'clinician_state'", 
-                                    f"'{arguments['npi_id']}', '{arguments['clinician_first_name']}', '{arguments['clinician_last_name']}', '{arguments['clinician_state']}'")
+            active_database.add_entity(table_name, "'npi_id', 'clinician_first_name', 'clinician_last_name', 'state'", 
+                                    f"'{arguments['npi_id']}', '{arguments['clinician_first_name']}', '{arguments['clinician_last_name']}', '{arguments['state']}'")
     
-        
+            returned_entities = 'Added'
         else:
             #to do: a better invalid message
             return('Invalid Clinican Details')
@@ -134,19 +135,19 @@ def clinician_endpoints():
         for argument in arguments:
             if arguments[argument]:
                 active_database.update_entity(table_name, f"{argument} = '{arguments[argument]}'", 
-                                              f"npi_id = {arguments['clinician_id']}")
+                                              f"npi_id = {arguments['npi_id']}")
         
-        returned_entites = 'Updated'
+        returned_entities = 'Updated'
 
     elif request.method == 'DELETE':
         # Delete entity in appointments table
-        active_database.delete_entity(table_name, f"npi_id = {arguments['clinician_id']}")
-        returned_entites = 'Deleted'
+        active_database.delete_entity(table_name, f"npi_id = {arguments['npi_id']}")
+        returned_entities = 'Deleted'
 
     # Closing the database
     active_database.close_database()
 
-    return jsonify(returned_entites)
+    return jsonify(returned_entities)
 
 
 
@@ -161,6 +162,7 @@ def patients_endpoints():
         "patient_first_name": request.args.get('patient_first_name'),
         "patient_last_name": request.args.get('patient_last_name'),
         "phone_number": request.args.get('phone_number'),
+        "preferred_clinician_id": request.args.get('preferred_clinician_id'),
     }
 
     # Open database
@@ -169,17 +171,13 @@ def patients_endpoints():
     table_name = 'patient_table'
 
     if request.method == 'GET':
-        returned_entites = active_database.search_table(f"'{arguments['patient_first_name']}', '{arguments['patient_last_name']}', '{arguments['phone_number']}'",table_name,f"patient_id = {arguments['patient_id']}",None,None,None)
-
-
+        returned_entities = active_database.search_table("*",table_name,f"patient_id = {arguments['patient_id']}",None,None,None)
 
     elif request.method == 'POST':
         # Create new entity in appointments table
-        active_database.add_entity(table_name, "'patient_id', 'patient_first_name', 'patient_last_name', 'phone_number'", 
-            f"'{arguments['patient_id']}', '{arguments['patient_first_name']}', '{arguments['patient_last_name']}', '{arguments['phone_number']}'")
-        returned_entites = 'Added'
-        
-
+        active_database.add_entity(table_name, "'patient_first_name', 'patient_last_name', 'phone_number','preferred_clinician_id'", 
+            f"'{arguments['patient_first_name']}', '{arguments['patient_last_name']}', '{arguments['phone_number']}', '{arguments['preferred_clinician_id']}'")
+        returned_entities = 'Added'
 
     elif request.method == 'PATCH':
         # Update entity in appointments table
@@ -188,17 +186,17 @@ def patients_endpoints():
                 active_database.update_entity(table_name, f"{argument} = '{arguments[argument]}'", 
                                               f"patient_id = {arguments['patient_id']}")
         
-        returned_entites = 'Updated'
+        returned_entities = 'Updated'
 
     elif request.method == 'DELETE':
         # Delete entity in appointments table
         active_database.delete_entity(table_name, f"patient_id = {arguments['patient_id']}")
-        returned_entites = 'Deleted'
+        returned_entities = 'Deleted'
 
     # Closing the database
     active_database.close_database()
 
-    return jsonify(returned_entites)
+    return jsonify(returned_entities)
 
 
 

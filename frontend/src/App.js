@@ -7,6 +7,8 @@ const App = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // search appointment form
+
   const [appointmentId, setAppointmentId] = useState('');
   const [clinicianName, setClinicianName] = useState('');
   const [patientName, setPatientName] = useState('');
@@ -33,6 +35,10 @@ const App = () => {
   const [updateStatus, setUpdateStatus] = useState('Scheduled');
 
 
+    // search patient form
+    const [patientsBySearch, setPatientsBySearch] = useState([]);
+    const [searchPatientId, setSearchPatientId] = useState('');
+
     // Register Patient form data
     const [registerPatientId, setRegisterPatientId] = useState('');
     const [registerPatientFirstName, setRegisterPatientFirstName] = useState('');
@@ -44,28 +50,20 @@ const App = () => {
     const [deletePatientId, setDeletePatientId] = useState('');
   
     // Update patient form data
-    const [updatePatientFirstName, setUpdatePatientFirstName] = useState('');
-    const [updatePatientLastName, setUpdatePatientLastName] = useState('');
-    const [updatePatientNumber, setUpdatePatientNumber] = useState('');
-    const [updatePatientClinician, setUpdatePatientClinician] = useState('');
+    const [registeredPatientId, setRegisteredPatientId] = useState('');
+    const [registeredPatientFirstName, setRegisteredPatientFirstName] = useState('');
+    const [registeredPatientLastName, setRegisteredPatientLastName] = useState('');
+    const [registeredPatientNumber, setRegisteredPatientNumber] = useState('');
+    const [registeredPatientClinician, setRegisteredPatientClinician] = useState('');
 
 
         // Register Doctor form data
-        const [registerDoctorId, setRegisterDoctorId] = useState('');
-        const [registerDoctorFirstName, setRegisterDoctorFirstName] = useState('');
-        const [registerDoctorLastName, setRegisterDoctorLastName] = useState('');
-        const [registerDoctorState, setRegisterDoctorState] = useState('');
+        const [registerClinicianId, setRegisterClinicianID] = useState('');
+        const [registerClinicianFirstName, setRegisterClinicianFirstName] = useState('');
+        const [registerClinicianLastName, setRegisterClinicianLastName] = useState('');
+        const [registerClinicianState, setRegisterClinicianState] = useState('');
       
-        // Delete doctor form data
-        const [deleteDoctorId, setDeleteDoctorId] = useState('');
-      
-        // Update doctor form data
-        const [updateDoctorFirstName, setUpdateDoctorFirstName] = useState('');
-        const [updateDoctorLastName, setUpdateDoctorLastName] = useState('');
-        const [updateDoctorState, setUpdateDoctorState] = useState('');
-
-
-
+    
 
   // Fetch appointment by ID
   const fetchAppointment = async () => {
@@ -87,6 +85,32 @@ const App = () => {
     }
     setLoading(false);
   };
+
+
+
+  // Fetch patient by ID
+  const fetchPatient = async () => {
+    if (!searchPatientId) {
+      setError('Please enter an patient ID');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/patients?patient_id=${searchPatientId}`);
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setPatientsBySearch(Array.isArray(data) ? data : [data]); // Ensure it's always an array
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching appointments:', err);
+      setError(err.message);
+      setPatientsBySearch([]); // Reset appointments if error occurs
+    }
+    setLoading(false);
+  };
+
+
+
 
   // Fetch appointments by clinician name
   const fetchAppointmentsByClinician = async () => {
@@ -129,6 +153,12 @@ const App = () => {
     }
     setLoading(false);
   };
+
+
+
+
+
+
 
   // Fetch appointments by date range
   const fetchAppointmentsByDate = async () => {
@@ -184,6 +214,77 @@ const App = () => {
     setLoading(false);
   };
 
+
+      
+  // Create a new patient (POST request)
+  const createPatient = async () => {
+    if ( !registerPatientFirstName || !registerPatientLastName || !registerPatientNumber  || !registerPatientClinician) {
+      setError('Please fill in all fields for the new appointment');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/patients?patient_first_name=${registerPatientFirstName}&patient_last_name=${registerPatientLastName}&phone_number=${registerPatientNumber}&preferred_clinician_id=${registerPatientClinician}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setError(null);
+      alert('Patient created successfully');
+      // Clear the form after successful creation
+      setRegisterPatientFirstName('');
+      setRegisterPatientLastName('');
+      setRegisterPatientNumber('');
+      setRegisterPatientClinician('');
+    } catch (err) {
+      console.error('Error creating patient:', err);
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+
+
+  // Create a new Clinician (POST request)
+  const createClinician = async () => {
+    if ( !registerClinicianFirstName || !registerClinicianLastName || !registerClinicianId  || !registerClinicianState) {
+      setError('Please fill in all fields for the new Clinician');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/clinicians?clinician_first_name=${registerClinicianFirstName}&clinician_last_name=${registerClinicianLastName}&state=${registerClinicianState}&npi_id=${registerClinicianId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setError(null);
+      alert('Clinician created successfully');
+      // Clear the form after successful creation
+      setRegisterClinicianID('');
+      setRegisterClinicianLastName('');
+      setRegisterClinicianFirstName('');
+      setRegisterClinicianState('');
+    } catch (err) {
+      console.error('Error creating clinician:', err);
+      setError('Clinician Details Do NOT match Regsitry');
+    }
+    setLoading(false);
+  };
+
+
+
+
   // Update an appointment (PATCH request)
   const updateAppointment = async () => {
     if (!updateAppointmentId) {
@@ -217,6 +318,43 @@ const App = () => {
     setLoading(false);
   };
 
+
+  // Update an patient (PATCH request)
+  const updatePatient = async () => {
+    if (!registeredPatientId) {
+      setError('Please fill in appointment ID to update');
+      return;
+    }
+
+    setLoading(true);
+    try {
+        
+        const res = await fetch(`http://127.0.0.1:5000/patients?patient_id=${registeredPatientId}&patient_first_name=${registeredPatientFirstName}&patient_last_name=${registeredPatientLastName}&phone_number=${registeredPatientNumber}&preferred_clinician_id=${registeredPatientClinician}`, {
+            method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setError(null);
+      alert('Appointment updated successfully');
+      // Clear the form after successful update
+      setRegisteredPatientId('');
+      setRegisteredPatientFirstName('');
+      setRegisteredPatientLastName('');
+      setRegisteredPatientNumber('');
+      setRegisteredPatientClinician('');
+    } catch (err) {
+      console.error('Error updating appointment:', err);
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+
+
   // Delete an appointment (POST request)
   const deleteAppointment = async () => {
     if (!deleteAppointmentId) {
@@ -245,6 +383,37 @@ const App = () => {
     }
     setLoading(false);
   };
+
+   // Delete an appointment (POST request)
+   const deletePatient = async () => {
+    if (!deletePatientId) {
+      setError('Please fill in all fields to delete patient');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/patients?patient_id=${deletePatientId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setError(null);
+      alert('Patient deleted successfully');
+      // Clear the form after successful creation
+      setDeletePatientId('');
+    } catch (err) {
+      console.error('Error deleting patient:', err);
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+
 
   return (
     <div className="p-4">
@@ -330,17 +499,14 @@ const App = () => {
       {loading && <p>Loading...</p>}
 
       {/* Display Appointments */}
-      {appointmentsByClinician.length > 0 && (
+      {patientsBySearch.length > 0 && (
         <div className="mt-4">
-          <h2 className="font-bold">Appointments</h2>
-          {appointmentsByClinician.map((appt) => (
-            <div key={appt.appointment_id} className="p-4 border rounded bg-gray-100 mb-2">
-              <p>Appointment ID: {appt.appointment_id}</p>
-              <p>Patient ID: {appt.appt_patient_id}</p>
-              <p>Patient Name: {appt.appt_patient_first_name} {appt.appt_patient_last_name}</p>
-              <p>Clinician: {appt.appt_clinician_id}</p>
-              <p>Date: {new Date(appt.date_time).toLocaleString()}</p>
-              <p>Status: {appt.status}</p>
+          <h2 className="font-bold">Patients</h2>
+          {patientsBySearch.map((appt) => (
+            <div key={appt.patient_id} className="p-4 border rounded bg-gray-100 mb-2">
+              <p>Appointment ID: {appt.patient_id}</p>
+              <p>Patient ID: {appt.patient_first_name}</p>
+
               <p> -------- </p>
             </div>
           ))}
@@ -460,6 +626,186 @@ const App = () => {
 
       <p> -------- </p>
 
+
+{/* Display Appointments */}
+{appointmentsByClinician.length > 0 && (
+        <div className="mt-4">
+          <h2 className="font-bold">Appointments</h2>
+          {appointmentsByClinician.map((appt) => (
+            <div key={appt.appointment_id} className="p-4 border rounded bg-gray-100 mb-2">
+              <p>Appointment ID: {appt.appointment_id}</p>
+              <p>Patient ID: {appt.appt_patient_id}</p>
+              <p>Patient Name: {appt.appt_patient_first_name} {appt.appt_patient_last_name}</p>
+              <p>Clinician: {appt.appt_clinician_id}</p>
+              <p>Date: {new Date(appt.date_time).toLocaleString()}</p>
+              <p>Status: {appt.status}</p>
+              <p> -------- </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add New Patient Form */}
+      <div className="mt-4">
+        <h2 className="font-bold">Create New Patient</h2>
+        <div className="flex gap-2 mb-4">
+          <input
+            type="text"
+            value={registerPatientFirstName}
+            onChange={(e) => setRegisterPatientFirstName(e.target.value)}
+            placeholder="Patient First Name"
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={registerPatientLastName}
+            onChange={(e) => setRegisterPatientLastName(e.target.value)}
+            placeholder="Patient Last Name"
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={registerPatientNumber}
+            onChange={(e) => setRegisterPatientNumber(e.target.value)}
+            placeholder="Patient Phone Number"
+            className="border p-2 rounded"
+          />
+                    <input
+            type="text"
+            value={registerPatientClinician}
+            onChange={(e) => setRegisterPatientClinician(e.target.value)}
+            placeholder="Patient Preferred Clinician"
+            className="border p-2 rounded"
+          />
+          
+          <button
+            onClick={createPatient}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Create Patient
+          </button>
+        </div>
+      </div>
+      
+      {/* Update New Patient Form */}
+      <div className="mt-4">
+        <h2 className="font-bold">Update Patient</h2>
+        <div className="flex gap-2 mb-4">
+        <input
+            type="text"
+            value={registeredPatientId}
+            onChange={(e) => setRegisteredPatientId(e.target.value)}
+            placeholder="Patient ID"
+            className="border p-2 rounded"
+          />
+
+          <input
+            type="text"
+            value={registeredPatientFirstName}
+            onChange={(e) => setRegisteredPatientFirstName(e.target.value)}
+            placeholder="Patient First Name"
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={registeredPatientLastName}
+            onChange={(e) => setRegisteredPatientLastName(e.target.value)}
+            placeholder="Patient Last Name"
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={registeredPatientNumber}
+            onChange={(e) => setRegisteredPatientNumber(e.target.value)}
+            placeholder="Patient Phone Number"
+            className="border p-2 rounded"
+          />
+                    <input
+            type="text"
+            value={registeredPatientClinician}
+            onChange={(e) => setRegisteredPatientClinician(e.target.value)}
+            placeholder="Patient Preferred Clinician"
+            className="border p-2 rounded"
+          />
+          
+          <button
+            onClick={updatePatient}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Update Patient
+          </button>
+        </div>
+      </div>
+
+
+      {/* Delete Patient Form */}
+      <div className="mt-4">
+        <h2 className="font-bold">Delete Patient</h2>
+        <div className="flex gap-2 mb-4">
+          <input
+            type="text"
+            value={deletePatientId}
+            onChange={(e) => setDeletePatientId(e.target.value)}
+            placeholder="Patient ID"
+            className="border p-2 rounded"
+          />
+          <button
+            onClick={deletePatient}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Delete Patient
+          </button>
+        </div>
+      </div>
+
+      
+
+      <p> -------- </p>
+
+
+      {/* Add New Clinician Form */}
+      <div className="mt-4">
+        <h2 className="font-bold">Create New Clinician</h2>
+        <div className="flex gap-2 mb-4">
+        <input
+            type="text"
+            value={registerClinicianId}
+            onChange={(e) => setRegisterClinicianID(e.target.value)}
+            placeholder="Clinician ID"
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={registerClinicianFirstName}
+            onChange={(e) => setRegisterClinicianFirstName(e.target.value)}
+            placeholder="Clinician First Name"
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={registerClinicianLastName}
+            onChange={(e) => setRegisterClinicianLastName(e.target.value)}
+            placeholder="Clinician Last Name"
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={registerClinicianState}
+            onChange={(e) => setRegisterClinicianState(e.target.value)}
+            placeholder="Patient Phone Number"
+            className="border p-2 rounded"
+          />
+          
+          <button
+            onClick={createClinician}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Create Clinician
+          </button>
+        </div>
+      </div>
+
+      <p> -------- </p>
     </div>
 
     
