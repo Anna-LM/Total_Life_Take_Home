@@ -1,0 +1,42 @@
+Improvements/To Do:
+
+
+Validation - 
+    On user inputs
+        Patient and Clinicians selected from drop down
+        Search by clinician/patient name not just ID
+        Update field for clinician details would interact with registry
+    SQL 
+        Injections
+        Consistency i.e. cant delete a doctor if has appointments
+        Unique i.e. patient Details/appointments
+
+
+Error Messages - 
+    More informative error Messages
+    Include Error Codes i.e. 404, 200, 503 etc
+
+End Points -
+    Include more of the end points in the front end
+    Better validation on end points
+
+Code Structure -
+    Separate pages/react endpoints for the different searches (i.e. http://localhost:3001/patients )
+    Separate Code into different files
+    Reduce code redundnacy by creating more objects and methods for repeated/similar sections and removing unused variables/functions
+    Documentation, inline and external
+    
+Other - 
+    Import SQL entities from txt or elsewhere in initiation
+
+WWW:
+    Showcased
+        OOP
+        SQLite/DBMS
+        React/Front End (Limited)
+        Python/Back End
+        API Calls (Limited)
+        GithHub
+
+    Demonstrated most skills once
+    Future Improvements

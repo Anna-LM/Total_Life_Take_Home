@@ -8,7 +8,6 @@ const App = () => {
   const [loading, setLoading] = useState(false);
 
   // search appointment form
-
   const [appointmentId, setAppointmentId] = useState('');
   const [clinicianName, setClinicianName] = useState('');
   const [patientName, setPatientName] = useState('');
@@ -153,10 +152,6 @@ const App = () => {
     }
     setLoading(false);
   };
-
-
-
-
 
 
 
