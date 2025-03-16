@@ -301,7 +301,8 @@ const App = () => {
           {appointmentsByClinician.map((appt) => (
             <div key={appt.appointment_id} className="p-4 border rounded bg-gray-100 mb-2">
               <p>Appointment ID: {appt.appointment_id}</p>
-              <p>Patient: {appt.appt_patient_id}</p>
+              <p>Patient ID: {appt.appt_patient_id}</p>
+              <p>Patient Name: {appt.appt_patient_first_name} {appt.appt_patient_last_name}</p>
               <p>Clinician: {appt.appt_clinician_id}</p>
               <p>Date: {new Date(appt.date_time).toLocaleString()}</p>
               <p>Status: {appt.status}</p>
@@ -421,7 +422,12 @@ const App = () => {
           </button>
         </div>
       </div>
+
+      <p> -------- </p>
+      
     </div>
+
+    
   );
 };
 

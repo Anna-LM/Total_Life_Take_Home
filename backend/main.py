@@ -42,8 +42,13 @@ def appointments_endpoints():
                 query_conditions.append(f"{argument} = '{value}'")
 
         query_condition = ' AND '.join(query_conditions) if query_conditions else '1=1'  # Default to '1=1' to get all records if no filters are provided
-        returned_results = active_database.search_table('*', table_name, query_condition, 'date_time ASC', None, None)
+        
+        FOREIGN_KEY_CONDITION = f'INNER JOIN patient_table ON appointment_table."appt_patient_id" = patient_table."patient_id"'
+        select = "appointment_id, date_time,status,appt_patient_id,appt_clinician_id,patient_first_name,patient_last_name"
+        
+        returned_results = active_database.search_table(select, table_name, query_condition, 'date_time ASC', None, FOREIGN_KEY_CONDITION)
 
+     
         # Format the returned results into a list of dictionaries
         returned_entities = []
         if returned_results:
@@ -53,7 +58,10 @@ def appointments_endpoints():
                     "date_time": result[1],
                     "status": result[2],
                     "appt_patient_id": result[3],
-                    "appt_clinician_id": result[4]
+                    "appt_clinician_id": result[4],
+                    "appt_patient_first_name":result[5],
+                    "appt_patient_last_name":result[6],
+
                 })
 
         returned_entites = returned_entities
