@@ -18,6 +18,10 @@ const App = () => {
   const [newDate, setNewDate] = useState('');
   const [newStatus, setNewStatus] = useState('Scheduled');
 
+  // Delete appointment form data
+  const [deleteAppointmentId, setDeleteAppointmentId] = useState('');
+
+
   // Fetch appointment by ID
   const fetchAppointment = async () => {
     if (!appointmentId) {
@@ -114,6 +118,38 @@ const App = () => {
     }
     setLoading(false);
   };
+
+   // Delete a new appointment (POST request)
+   const deleteAppointment = async () => {
+    if ( !deleteAppointmentId ) {
+      setError('Please fill in all fields to delete appointment');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/appointments?appointment_id=${deleteAppointmentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+       
+      });
+
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setError(null);
+      alert('Appointment deleted successfully');
+      // Clear the form after successful creation
+      setDeleteAppointmentId('');
+
+    } catch (err) {
+      console.error('Error creating appointment:', err);
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
 
   return (
     <div className="p-4">
@@ -261,6 +297,30 @@ const App = () => {
           Create Appointment
         </button>
       </div>
+
+
+       {/* Delete Appointment Form */}
+       <div className="mt-4">
+        <h2 className="font-bold">Delete Appointment</h2>
+        <div className="flex gap-2 mb-4">
+          <input
+            type="text"
+            value={deleteAppointmentId}
+            onChange={(e) => setDeleteAppointmentId(e.target.value)}
+            placeholder="Appointment ID"
+            className="border p-2 rounded"
+          />
+        </div>
+        <button
+          onClick={deleteAppointment}
+          className="bg-teal-500 text-white px-4 py-2 rounded"
+        >
+          Delete Appointment
+        </button>
+      </div>
+
+
+
     </div>
   );
 };
