@@ -48,14 +48,20 @@ def appointments_endpoints():
 
     elif request.method == 'POST':
         #create new entity in appointments table
-        print('here')
-        
         active_database.add_entity(table_name,"'appt_patient_id', 'appt_clinician_id', 'date_time','status'",f"'{arguments['appt_patient_id']}', '{arguments['appt_clinician_id']}', '{arguments['date_time']}','{arguments['status']}'")
         returned_entites = 'Added'
 
     elif request.method == 'PATCH':
         #Update entity in appointments table
-        #active_database.update_entity(table_name,f"date_time = '{arguments['date_time']}'",f'appointment_id = {arguments['appointment_id']}')
+
+        for argument in arguments:
+            if (arguments[argument]):
+                print(argument)
+                print(arguments[argument])
+                print(arguments['appointment_id'])
+                active_database.update_entity(table_name,f"{argument} = '{arguments[argument]}'", f"appointment_id = {arguments['appointment_id']}")
+        
+        
         returned_entites = 'Updated'
 
     elif request.method == 'DELETE':

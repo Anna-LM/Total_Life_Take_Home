@@ -21,6 +21,13 @@ const App = () => {
   // Delete appointment form data
   const [deleteAppointmentId, setDeleteAppointmentId] = useState('');
 
+  // Update appointment form data
+  const [updateAppointmentId, setUpdateAppointmentId] = useState('');
+  const [updatePatientID, setUpdatePatientID] = useState('');
+  const [updateClinicianID, setUpdateClinicianID] = useState('');
+  const [updateDate, setUpdateDate] = useState('');
+  const [updateStatus, setUpdateStatus] = useState('Scheduled');
+
 
   // Fetch appointment by ID
   const fetchAppointment = async () => {
@@ -119,6 +126,42 @@ const App = () => {
     setLoading(false);
   };
 
+  // Update a appointment (PATCH request)
+  const updateAppointment = async () => {
+    if ( !updateAppointmentId ) {
+      setError('Please fill in appointment ID to update');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/appointments?appointment_id=${updateAppointmentId}&appt_patient_id=${updatePatientID}&appt_clinician_id=${updateClinicianID}&date_time=${updateDate}&status=${updateStatus}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+       
+      });
+
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      setError(null);
+      alert('Appointment updated successfully');
+      // Clear the form after successful update
+      setUpdateAppointmentId('');
+      setUpdatePatientID('');
+      setUpdateClinicianID('');
+      setUpdateDate('');
+      setUpdateStatus('Scheduled');
+    } catch (err) {
+      console.error('Error updating appointment:', err);
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+
+
    // Delete a new appointment (POST request)
    const deleteAppointment = async () => {
     if ( !deleteAppointmentId ) {
@@ -144,7 +187,7 @@ const App = () => {
       setDeleteAppointmentId('');
 
     } catch (err) {
-      console.error('Error creating appointment:', err);
+      console.error('Error deleting appointment:', err);
       setError(err.message);
     }
     setLoading(false);
@@ -295,6 +338,55 @@ const App = () => {
           className="bg-teal-500 text-white px-4 py-2 rounded"
         >
           Create Appointment
+        </button>
+      </div>
+
+ {/* Update Appointment Form */}
+ <div className="mt-4">
+        <h2 className="font-bold">Update Appointment</h2>
+        <div className="flex gap-2 mb-4">
+        <input
+            type="text"
+            value={updateAppointmentId}
+            onChange={(e) => setUpdateAppointmentId(e.target.value)}
+            placeholder="Appointment ID"
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={updatePatientID}
+            onChange={(e) => setUpdatePatientID(e.target.value)}
+            placeholder="Patient ID"
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={updateClinicianID}
+            onChange={(e) => setUpdateClinicianID(e.target.value)}
+            placeholder="Clinician ID"
+            className="border p-2 rounded"
+          />
+          <input
+            type="datetime-local"
+            value={updateDate}
+            onChange={(e) => setUpdateDate(e.target.value)}
+            className="border p-2 rounded"
+          />
+          <select
+            value={updateStatus}
+            onChange={(e) => setUpdateStatus(e.target.value)}
+            className="border p-2 rounded"
+          >
+            <option value="Scheduled">Scheduled</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+        <button
+          onClick={updateAppointment}
+          className="bg-teal-500 text-white px-4 py-2 rounded"
+        >
+          Update Appointment
         </button>
       </div>
 
