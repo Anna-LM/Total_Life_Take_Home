@@ -41,18 +41,18 @@ const App = () => {
     }
 
     fetch(`http://127.0.0.1:5000/appointments?appt_clinician_id=${clinicianName}`)
-      .then((res) => {
+    .then((res) => {
         if (!res.ok) throw new Error('Network response was not ok');
         return res.json();
       })
       .then((data) => {
-        setAppointmentsByClinician(data);
+        setAppointmentDetails(Array.isArray(data) ? data[0] : data);
         setError(null);
       })
       .catch((err) => {
-        console.error('Error fetching appointments by clinician:', err);
+        console.error('Error fetching appointment:', err);
         setError(err.message);
-        setAppointmentsByClinician([]);
+        setAppointmentDetails(null);
       });
   };
 
@@ -64,18 +64,18 @@ const App = () => {
     }
 
     fetch(`http://127.0.0.1:5000/appointments?appt_patient_id=${patientName}`)
-      .then((res) => {
+    .then((res) => {
         if (!res.ok) throw new Error('Network response was not ok');
         return res.json();
       })
       .then((data) => {
-        setAppointmentsByPatient(data);
+        setAppointmentDetails(Array.isArray(data) ? data[0] : data);
         setError(null);
       })
       .catch((err) => {
-        console.error('Error fetching appointments by patient:', err);
+        console.error('Error fetching appointment:', err);
         setError(err.message);
-        setAppointmentsByPatient([]);
+        setAppointmentDetails(null);
       });
   };
 
