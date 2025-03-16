@@ -11,6 +11,7 @@ Dependencies/Requirements:
 
 
 Set-Up Instructions:
+
     Terminal A (Back-End):
         cd backend
         python3 main.py
