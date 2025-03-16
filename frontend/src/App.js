@@ -141,37 +141,11 @@ const App = () => {
       {appointmentDetails && (
         <div className="p-4 border rounded bg-gray-100">
           <h2 className="font-bold">Appointment Details</h2>
-          <p>Patient: {appointmentDetails.patient_name}</p>
+          <p>Appointment ID: {appointmentDetails.appointment_id}</p>
+          <p>Patient: {appointmentDetails.appt_patient_id}</p>
+          <p>Clinician: {appointmentDetails.appt_clinician_id}</p>
           <p>Date: {new Date(appointmentDetails.date_time).toLocaleString()}</p>
           <p>Status: {appointmentDetails.status}</p>
-        </div>
-      )}
-
-      {/* Display Appointments by Clinician */}
-      {appointmentsByClinician.length > 0 && (
-        <div className="mt-4">
-          <h2 className="font-bold">Appointments for Clinician: {clinicianName}</h2>
-          <ul>
-            {appointmentsByClinician.map((appt) => (
-              <li key={appt.appointment_id} className="border-b p-2">
-                {appt.patient_name} - {new Date(appt.date_time).toLocaleString()} - {appt.status}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Display Appointments by Patient */}
-      {appointmentsByPatient.length > 0 && (
-        <div className="mt-4">
-          <h2 className="font-bold">Appointments for Patient: {patientName}</h2>
-          <ul>
-            {appointmentsByPatient.map((appt) => (
-              <li key={appt.appointment_id} className="border-b p-2">
-                {appt.patient_name} - {new Date(appt.date_time).toLocaleString()} - {appt.status}
-              </li>
-            ))}
-          </ul>
         </div>
       )}
     </div>

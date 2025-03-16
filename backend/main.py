@@ -39,9 +39,10 @@ def appointments_endpoints():
         if len (returned_entites[0])>0: 
             returned_entites = {
                 "appointment_id": returned_entites[0][0],
-                "appt_patient_id": returned_entites[0][1],
-                "appt_clinician_id": returned_entites[0][2],
-                "date_time": returned_entites[0][3],
+                "date_time": returned_entites[0][1],
+                "status": returned_entites[0][2],
+                "appt_patient_id": returned_entites[0][3],
+                "appt_clinician_id": returned_entites[0][4],
                 }
             
 
