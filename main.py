@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 #Basic get response
-@app.route('/appointments', methods=['GET','POST'])
+@app.route('/appointments', methods=['GET','POST','PATCH','DELETE'])
 def return_appointments():
     appointment_id = request.args.get('appointment_id')
     appt_patient_id = request.args.get('appt_patient_id')
@@ -19,12 +19,21 @@ def return_appointments():
     if request.method == 'GET':
         #Read the correct data
         returned_entites = active_database.search_table('*','appointment_table',f'appointment_id = {appointment_id}','date_time DESC',None, None)
-    
+
     elif request.method == 'POST':
         #create new entity in appointments table
         active_database.add_entity('appointment_table',"'appt_patient_id', 'appt_clinician_id', 'date_time','status'",f"'{appt_patient_id}', '{appt_clinician_id}', '{date_time}','{status}'")
         returned_entites = 'Added'
 
+    elif request.method == 'PATCH':
+        #Update entity in appointments table
+        active_database.update_entity('appointment_table',f"date_time = '{date_time}'",f'appointment_id = {appointment_id}')
+        returned_entites = 'Updated'
+
+    elif request.method == 'DELETE':
+        #Delete entity in appointments table
+        active_database.delete_entity('appointment_table',f"appointment_id = {appointment_id}")
+        returned_entites = 'Deleted'
 
     #Closing the database
     active_database.close_database()
